@@ -38,6 +38,7 @@ public class FileSerializer {
 			if (isAllawedGetter(m)) {
 				try {
 					Object value = m.invoke(obj);
+					
 					String getterName = m.getName();
 					String propName = getterName.substring(3, 4).toLowerCase()
 							+ getterName.substring(4);
