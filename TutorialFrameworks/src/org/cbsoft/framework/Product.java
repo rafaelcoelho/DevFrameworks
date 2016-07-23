@@ -1,14 +1,20 @@
 package org.cbsoft.framework;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class Product implements PropertiesGetter{
+public class Product{
 	
 	private String name;
 	private String brand;
 	private double price;
 	private String code;
+	private String secretCode;
+	
+	@DontIncludeOnFIle
+	public String getSecretCode() {
+		return secretCode;
+	}
+	public void setSecretCode(String secretCode) {
+		this.secretCode = secretCode;
+	}
 	
 	public Product(String name, String brand, double price, String code) {
 		this.name = name;
@@ -40,16 +46,5 @@ public class Product implements PropertiesGetter{
 	public void setCode(String code) {
 		this.code = code;
 	}
-	@Override
-	public Map<String, Object> getPropertiesList() {
-		Map<String,Object> props = new HashMap<String, Object>();
-		props.put("name", name);
-		props.put("brand", brand);
-		props.put("price", price);
-		props.put("code", code);
-		return props;
-	}
-	
-	
 
 }
