@@ -1,6 +1,7 @@
 package org.cbsoft.framework;
 
 import java.io.FileOutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +39,12 @@ public class FileSerializer {
 			if (isAllawedGetter(m)) {
 				try {
 					Object value = m.invoke(obj);
-					
+					value = FormatValue(m, value);
 					String getterName = m.getName();
 					String propName = getterName.substring(3, 4).toLowerCase()
 							+ getterName.substring(4);
+					value = FormatValue(m, value);
+					
 					props.put(propName, value);
 				} catch (Exception e) {
 					throw new RuntimeException("Cannot retrieve properties ...");
@@ -49,6 +52,22 @@ public class FileSerializer {
 			}
 		}
 		return props;
+	}
+
+	private Object FormatValue(Method m, Object value)
+			throws InstantiationException, IllegalAccessException {
+		for(Annotation an : m.getAnnotations()) {
+			Class<?> anType = an.annotationType();
+			
+			if (anType.isAnnotationPresent(FormatterImplementation.class)) {
+				FormatterImplementation fi = anType.getAnnotation(FormatterImplementation.class);
+				Class <? extends Valueformatter> c = fi.value();
+				Valueformatter vf = c.newInstance();
+				vf.readAnnotation(an);
+				value = vf.formatValue(value);
+			}
+		}
+		return value;
 	}
 
 	private boolean isAllawedGetter(Method m) {
